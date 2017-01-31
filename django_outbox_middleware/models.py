@@ -6,7 +6,5 @@ from model_utils.models import TimeStampedModel
 
 
 class OutboxRequestLog(TimeStampedModel):
-    pass
-    
-
-
+    request_uuid = models.UUIDField()
+    response_status_code = models.IntegerField()
