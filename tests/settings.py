@@ -28,6 +28,10 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 if django.VERSION >= (1, 10):
-    MIDDLEWARE = ()
+    MIDDLEWARE = (
+        'django_outbox_middleware.middleware.OutboxMiddleware',
+    )
 else:
-    MIDDLEWARE_CLASSES = ()
+    MIDDLEWARE_CLASSES = (
+        'django_outbox_middleware.middleware.OutboxMiddleware',
+    )
