@@ -11,12 +11,12 @@ class MiddlewareTests(TestCase):
 
     def test_echo_works(self):
         resp = self.client.post('/echo/', 'ping', content_type='text/plain')
-        assert resp.content == 'ping'
+        self.assertEqual(resp.content, b'ping')
 
     def test_no_header_set_no_log_created(self):
         self.client.post('/echo/', 'ping', content_type='text/plain')
 
-        assert OutboxRequestLog.objects.count() == 0
+        self.assertEqual(OutboxRequestLog.objects.count(), 0)
 
 
     def test_log_created_if_outbox_header_set(self):
@@ -28,8 +28,8 @@ class MiddlewareTests(TestCase):
             HTTP_OUTBOX_REQUEST_UUID=uuid_str,
         )
 
-        assert OutboxRequestLog.objects.count() == 1
+        self.assertEqual(OutboxRequestLog.objects.count(), 1)
         
         log = OutboxRequestLog.objects.get()
         self.assertEqual(str(log.request_uuid), uuid_str)
-        assert log.request_path == '/echo/'
+        self.assertEqual(log.request_path, '/echo/')
