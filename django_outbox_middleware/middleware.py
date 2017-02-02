@@ -16,10 +16,13 @@ class OutboxMiddleware(MiddlewareMixin):
                 request_uuid=request.META['HTTP_OUTBOX_REQUEST_UUID'],
                 response_status_code__lt=400
             ).exists():
-                return HttpResponse("OK", status=202)
+                resp = HttpResponse("OK", status=202)
+                resp['Outbox-Flagged-Duplicate'] = True
+                return resp
 
     def process_response(self, request, response):
         if 'HTTP_OUTBOX_REQUEST_UUID' in request.META:
+
             if getattr(settings, 'OUTBOX_LOG_BODY', False):
                 request_body = request.body
             else:
@@ -30,6 +33,7 @@ class OutboxMiddleware(MiddlewareMixin):
                 response_status_code=response.status_code,
                 request_body=request_body,
                 request_path=request.get_full_path(),
+                request_flagged_duplicate=response.get('Outbox-Flagged-Duplicate', False),
             )
 
         return response
