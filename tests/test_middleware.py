@@ -120,4 +120,4 @@ class MiddlewareTests(TestCase):
         )
 
         log = OutboxRequestLog.objects.get()
-        self.assertEqual(log.request_body, b'ping')
+        self.assertEqual(log.request_body, 'ping')
