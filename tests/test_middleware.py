@@ -1,6 +1,6 @@
 import uuid
 
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 
 from django_outbox_middleware.models import OutboxRequestLog
 
@@ -109,3 +109,15 @@ class MiddlewareTests(TestCase):
             'request_flagged_duplicate', flat=True
         ))
         self.assertEqual(is_flagged_list, [False, False])
+
+    @override_settings(OUTBOX_LOG_BODY=True)
+    def test_body_logged_when_enabled(self):
+        self.client.post(
+            '/echo/',
+            'ping',
+            content_type='text/plain',
+            HTTP_OUTBOX_REQUEST_UUID=str(uuid.uuid4()),
+        )
+
+        log = OutboxRequestLog.objects.get()
+        self.assertEqual(log.request_body, b'ping')
