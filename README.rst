@@ -35,18 +35,22 @@ Add it to your `INSTALLED_APPS`:
         ...
     )
 
-Add Django Outbox Middleware's URL patterns:
+Add it to your `MIDDLEWARE`:
 
 .. code-block:: python
 
-    from django_outbox_middleware import urls as django_outbox_middleware_urls
-
-
-    urlpatterns = [
+    # if django.VERSION >= (1, 10)
+    MIDDLEWARE (
         ...
-        url(r'^', include(django_outbox_middleware_urls)),
+        'django_outbox_middleware.middleware.OutboxMiddleware',
         ...
-    ]
+    )
+    # else
+    MIDDLEWARE_CLASSES = (
+        ...
+        'django_outbox_middleware.middleware.OutboxMiddleware',
+        ...
+    )
 
 Features
 --------
