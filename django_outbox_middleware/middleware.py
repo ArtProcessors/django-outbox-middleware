@@ -20,6 +20,12 @@ class OutboxMiddleware(MiddlewareMixin):
                 resp['Outbox-Flagged-Duplicate'] = True
                 return resp
 
+            # If logging the body, access it before it's sent to the view so
+            # that calling `request.read()` in the view doesn't break the
+            # middleware. See https://goo.gl/FUOVrV
+            if getattr(settings, 'OUTBOX_LOG_BODY', False):
+                str(request.body)
+
     def process_response(self, request, response):
         if 'HTTP_OUTBOX_REQUEST_UUID' in request.META:
 
